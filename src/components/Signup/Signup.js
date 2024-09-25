@@ -20,7 +20,7 @@ const Signup = () => {
         }
 
         try {
-            await axios.post('https://dev-project-ecommerce.upgrad.dev/api/users', {
+            await axios.post('https://dev-project-ecommerce.upgrad.dev/api/auth/signup  ', {
                 firstName,
                 lastName,
                 email,
@@ -112,7 +112,7 @@ const Signup = () => {
                     Sign Up
                 </Button>
                 <Typography align="center" style={{ marginTop: '20px' }}>
-                    Already have an account? <a href="/signin">Sign in</a>
+                    Already have an account? <a href="/Login">Sign in</a>
                 </Typography>
             </Paper>
         </div>

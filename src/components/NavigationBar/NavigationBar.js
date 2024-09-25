@@ -1,49 +1,44 @@
+// src/components/NavigationBar/NavigationBar.js
 import React from 'react';
-import { AppBar, Toolbar, Typography, Button, TextField, InputAdornment } from '@material-ui/core';
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
-import SearchIcon from '@material-ui/icons/Search';
+import { AppBar, Toolbar, Typography, Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 
-const NavigationBar = ({ isLoggedIn, isAdmin, onLogout }) => {
+const NavigationBar = ({ user, onLogout }) => {
     return (
-        <AppBar position="static" style={{ backgroundColor: '#3f51b5' }}>
-            <Toolbar style={{ display: 'flex', alignItems: 'center' }}>
-                <ShoppingCartIcon />
-                <Typography variant="h6" style={{ marginLeft: '10px', color: 'white' }}>
-                    upGrad E-Shop
+        <AppBar position="static">
+            <Toolbar>
+                <Typography variant="h6" style={{ flexGrow: 1 }}>
+                    E-commerce
                 </Typography>
-                <div style={{ flexGrow: 1, display: 'flex', justifyContent: 'center' }}>
-                    <TextField
-                        placeholder="Search"
-                        variant="outlined"
-                        size="small"
-                        InputProps={{
-                            startAdornment: (
-                                <InputAdornment position="start">
-                                    <SearchIcon style={{ color: 'white' }} />
-                                </InputAdornment>
-                            ),
-                            style: { color: 'white' }, // Change text color to white
-                        }}
-                        style={{
-                            margin: '0 20px',
-                            backgroundColor: 'rgba(255, 255, 255, 0.2)', // Light white background
-                            border: 'none', // Remove border
-                            width: '400px' // Set width to make it wider
-                        }}
-                    />
-                </div>
-                {isLoggedIn ? (
+
+                <Link to="/" style={{ textDecoration: 'none', color: 'white', marginRight: '20px' }}>
+                    <Button color="inherit">Home</Button>
+                </Link>
+
+                {user ? (
                     <>
-                        <Button color="inherit" component={Link} to="/">Home</Button>
-                        <Button color="inherit" onClick={onLogout}>Logout</Button>
-                        {isAdmin && <Button color="inherit" component={Link} to="/add-products">Add Products</Button>}
+                        {user.isAdmin && (
+                            <Link to="/add-products" style={{ textDecoration: 'none', color: 'white', marginRight: '20px' }}>
+                                <Button color="inherit">Add Product</Button>
+                            </Link>
+                        )}
+                        <Button
+                            color="secondary"
+                            variant="contained"
+                            onClick={onLogout}
+                            style={{ backgroundColor: 'red', color: 'white' }}
+                        >
+                            Logout
+                        </Button>
                     </>
                 ) : (
                     <>
-                        <Button color="inherit" component={Link} to="/">Home</Button>
-                        <Button color="inherit" component={Link} to="/login">Login</Button>
-                        <Button color="inherit" component={Link} to="/signup">Signup</Button>
+                        <Link to="/login" style={{ textDecoration: 'none', color: 'white', marginRight: '20px' }}>
+                            <Button color="inherit">Login</Button>
+                        </Link>
+                        <Link to="/signup" style={{ textDecoration: 'none', color: 'white' }}>
+                            <Button color="inherit">Sign Up</Button>
+                        </Link>
                     </>
                 )}
             </Toolbar>
