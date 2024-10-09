@@ -38,7 +38,7 @@ const Login = ({ onLogin }) => {
             // Create userData based on response
             const userData = {
                 email: response.data.email,
-                isAdmin: response.data.roles.includes('admin') // Check if the user has admin role
+                isAdmin: response.data.roles.includes('ADMIN') // Check for 'ADMIN' role
             };
             onLogin(userData);
 

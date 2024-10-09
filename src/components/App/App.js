@@ -1,18 +1,17 @@
 // src/components/App/App.js
+
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
-import NavigationBar from '../NavigationBar/NavigationBar'; // Adjusted path
-import Login from '../Login/Login'; // Adjusted path
-import Signup from '../Signup/Signup'; // Adjusted path
-import Products from '../Products/Products'; // Assuming Products.js is at the same level
-import AddProducts from '../AddProducts/AddProducts'; // Assuming AddProducts.js is at the same level
-import ProductDetails from '../ProductDetails/ProductDetails'; // Import ProductDetails
-import CreateOrder from '../CreateOrder/CreateOrder'; // Import CreateOrder
-import ShoppingCartIcon from '@material-ui/icons/ShoppingCart'; // Logo icon
+import NavigationBar from '../NavigationBar/NavigationBar';
+import Login from '../Login/Login';
+import Signup from '../Signup/Signup';
+import Products from '../Products/Products';
+import AddProducts from '../AddProducts/AddProducts';
+import ProductDetails from '../ProductDetails/ProductDetails';
+import CreateOrder from '../CreateOrder/CreateOrder';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 
 const App = () => {
-    console.log('App component rendered');
-
     const [user, setUser] = useState(null);
 
     const handleLogin = (userData) => {
@@ -32,12 +31,12 @@ const App = () => {
                 </Route>
                 <Route path="/signup" component={Signup} />
                 <Route path="/products">
-                    <Products isLoggedIn={!!user} /> {/* Pass login status to Products */}
+                    <Products isLoggedIn={!!user} isAdmin={user?.isAdmin} /> {/* Pass login status and isAdmin to Products */}
                 </Route>
-                <Route path="/product/:id" component={ProductDetails} /> {/* Product details route */}
-                <Route path="/create-order/:id" component={CreateOrder} /> {/* Create order route */}
+                <Route path="/product/:id" component={ProductDetails} />
+                <Route path="/create-order/:id" component={CreateOrder} />
                 <Route path="/add-products">
-                    <AddProducts isLoggedIn={!!user} /> {/* Pass login status to AddProducts */}
+                    <AddProducts isLoggedIn={!!user} />
                 </Route>
                 <Route path="/" exact>
                     <div style={{ textAlign: 'center', marginTop: '20px' }}>

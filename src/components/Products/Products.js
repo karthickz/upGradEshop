@@ -87,11 +87,6 @@ const Products = ({ isLoggedIn, isAdmin }) => {
         setSortOrder(event.target.value);
     };
 
-    // Prevent rendering the component if not logged in
-    if (!isLoggedIn) {
-        return null;
-    }
-
     return (
         <div>
             {/* Sort and category toggles */}
@@ -112,10 +107,10 @@ const Products = ({ isLoggedIn, isAdmin }) => {
                 {/* Categories centered */}
                 <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
                     <ToggleButtonGroup value={selectedCategory} exclusive onChange={handleCategoryChange}>
-                        <ToggleButton value="all">All</ToggleButton>
+                        <ToggleButton value="all">ALL</ToggleButton>
                         {categories.map((category) => (
                             <ToggleButton key={category} value={category}>
-                                {category}
+                                {category.toUpperCase()}
                             </ToggleButton>
                         ))}
                     </ToggleButtonGroup>
@@ -153,6 +148,12 @@ const Products = ({ isLoggedIn, isAdmin }) => {
                                     <Button variant="contained" color="primary" style={{ marginTop: '10px' }}>
                                         Buy Now
                                     </Button>
+                                    {isAdmin && (
+                                        <div>
+                                            <Button variant="outlined" style={{ marginRight: '10px' }}>Edit</Button>
+                                            <Button variant="outlined" color="error">Delete</Button>
+                                        </div>
+                                    )}
                                 </CardContent>
                             </Card>
                         </Grid>
