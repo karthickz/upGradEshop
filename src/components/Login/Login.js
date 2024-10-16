@@ -1,7 +1,18 @@
 // src/components/Login/Login.js
+
 import React, { useState } from 'react';
 import axios from 'axios';
-import { TextField, Button, CircularProgress, Snackbar, SnackbarContent, Typography, Link, Paper, Box } from '@mui/material';
+import {
+    TextField,
+    Button,
+    CircularProgress,
+    Snackbar,
+    SnackbarContent,
+    Typography,
+    Link,
+    Paper,
+    Box
+} from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
 import { useHistory } from 'react-router-dom';
 
@@ -24,29 +35,38 @@ const Login = ({ onLogin }) => {
         setError('');
 
         try {
-            const response = await axios.post('https://dev-project-ecommerce.upgrad.dev/api/auth/signin', {
-                username: username.trim(),
-                password: password.trim()
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
+            const response = await axios.post(
+                'https://dev-project-ecommerce.upgrad.dev/api/auth/signin',
+                {
+                    username: username.trim(),
+                    password: password.trim()
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
                 }
-            });
+            );
 
             console.log("Login response:", response.data); // Log the response
 
-            // Create userData based on response
+            // Create userData based on response, including authToken
             const userData = {
-                email: response.data.email,
-                isAdmin: response.data.roles.includes('ADMIN') // Check for 'ADMIN' role
+                email: response.data.email, // Ensure you have the correct field from response
+                isAdmin: response.data.roles.includes('ADMIN'), // Check for 'ADMIN' role
+                authToken: response.data.accessToken // Ensure you are getting the accessToken from the response
             };
-            onLogin(userData);
+
+            onLogin(userData); // Pass userData including authToken to the parent component
 
             console.log("Navigating to /products");
             history.push('/products'); // Redirect to products page
         } catch (error) {
             console.error("Login failed:", error); // Log the full error
-            const errorMessage = error.response?.data?.message || error.message || "Login failed. Please check your credentials and try again.";
+            const errorMessage =
+                error.response?.data?.message ||
+                error.message ||
+                "Login failed. Please check your credentials and try again.";
             setError(errorMessage);
             setSnackbarOpen(true);
         } finally {
@@ -59,7 +79,13 @@ const Login = ({ onLogin }) => {
     };
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+        <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100vh'
+        }}>
             <Paper elevation={3} style={{ padding: '20px', maxWidth: '400px', width: '100%', textAlign: 'center' }}>
                 <div style={{
                     display: 'flex',

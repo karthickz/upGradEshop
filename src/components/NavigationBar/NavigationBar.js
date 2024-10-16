@@ -25,19 +25,34 @@ const NavigationBar = ({ user, onLogout }) => {
 
                 {user ? (
                     <>
-                        {location.pathname === '/products' && user.isAdmin && ( // Show Add Product link only on /products page for admin
-                            <Link to="/add-products" style={{ textDecoration: 'none', color: 'white', marginRight: '20px' }}>
-                                <Button color="inherit">Add Product</Button>
-                            </Link>
+                        {/* Conditionally render links based on the current path */}
+                        {location.pathname.includes('/edit-product') ? (
+                            // Show only Home and Logout links on the Edit Product page
+                            <Button
+                                color="secondary"
+                                variant="contained"
+                                onClick={onLogout}
+                                style={{ backgroundColor: 'red', color: 'white' }}
+                            >
+                                Logout
+                            </Button>
+                        ) : (
+                            <>
+                                {location.pathname === '/products' && user.isAdmin && ( // Show Add Product link only on /products page for admin
+                                    <Link to="/add-products" style={{ textDecoration: 'none', color: 'white', marginRight: '20px' }}>
+                                        <Button color="inherit">Add Product</Button>
+                                    </Link>
+                                )}
+                                <Button
+                                    color="secondary"
+                                    variant="contained"
+                                    onClick={onLogout}
+                                    style={{ backgroundColor: 'red', color: 'white' }}
+                                >
+                                    Logout
+                                </Button>
+                            </>
                         )}
-                        <Button
-                            color="secondary"
-                            variant="contained"
-                            onClick={onLogout}
-                            style={{ backgroundColor: 'red', color: 'white' }}
-                        >
-                            Logout
-                        </Button>
                     </>
                 ) : (
                     <>

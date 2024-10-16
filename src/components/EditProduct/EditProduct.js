@@ -1,7 +1,7 @@
-// src/pages/AddProduct.js
+// src/pages/EditProduct.js
 
 import React, { useEffect, useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import {
     TextField,
     Button,
@@ -13,8 +13,10 @@ import {
 import CreatableSelect from 'react-select/creatable';
 import axios from 'axios';
 
-const AddProduct = () => {
+const EditProduct = ({ authToken }) => {
+    console.log('Received Auth Token:', authToken); // Log the received auth token
     const history = useHistory();
+    const { id } = useParams();
     const [categories, setCategories] = useState([]);
     const [name, setName] = useState('');
     const [selectedCategory, setSelectedCategory] = useState(null);
@@ -27,21 +29,43 @@ const AddProduct = () => {
     const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
+        const fetchProductDetails = async () => {
+            try {
+                const response = await axios.get(`https://dev-project-ecommerce.upgrad.dev/api/products/${id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${authToken}`, // Pass the auth token here
+                    },
+                });
+                const product = response.data;
+                setName(product.name);
+                setSelectedCategory({ value: product.category, label: product.category });
+                setManufacturer(product.manufacturer);
+                setAvailableItems(product.availableItems);
+                setPrice(product.price);
+                setImageUrl(product.imageUrl);
+                setDescription(product.description);
+            } catch (error) {
+                console.error('Error fetching product details:', error.response?.data || error.message);
+                setErrorMessage('Failed to load product details');
+            }
+        };
+
         const fetchCategories = async () => {
             try {
                 const response = await axios.get('https://dev-project-ecommerce.upgrad.dev/api/products/categories');
                 const categoryOptions = response.data.map(category => ({ value: category, label: category }));
                 setCategories(categoryOptions);
             } catch (error) {
-                console.error('Error fetching categories:', error);
+                console.error('Error fetching categories:', error.response?.data || error.message);
                 setErrorMessage('Failed to load categories');
             }
         };
 
+        fetchProductDetails();
         fetchCategories();
-    }, []);
+    }, [id, authToken]);
 
-    const handleAddProduct = async (e) => {
+    const handleUpdateProduct = async (e) => {
         e.preventDefault();
 
         const productData = {
@@ -54,28 +78,23 @@ const AddProduct = () => {
             description,
         };
 
-        console.log('Product Data:', productData); // Log the product data for debugging
+        console.log('Auth Token:', authToken); // Check token
+        console.log('Product Data:', productData); // Log product data
 
         try {
-            const response = await axios.post('https://dev-project-ecommerce.upgrad.dev/api/products', productData, {
+            const response = await axios.put(`https://dev-project-ecommerce.upgrad.dev/api/products/${id}`, productData, {
                 headers: {
-                    'Authorization': `Bearer YOUR_ACCESS_TOKEN`, // Replace with your actual token
+                    'Authorization': `Bearer ${authToken}`, // Pass the auth token here
                 },
             });
-            console.log('API Response:', response.data); // Log the response for debugging
-            setSuccessMessage('Product added successfully!');
-            // Reset form fields
-            setName('');
-            setSelectedCategory(null);
-            setManufacturer('');
-            setAvailableItems('');
-            setPrice('');
-            setImageUrl('');
-            setDescription('');
+            console.log('API Response:', response.data); // Log response
+            setSuccessMessage('Product updated successfully!');
+            setErrorMessage(''); // Clear any previous error messages
+            history.push('/products');
         } catch (error) {
-            console.error('Error adding product:', error);
-            console.error('Error details:', error.response); // Log the full error response
-            setErrorMessage(`Failed to add product: ${error.response?.data?.message || error.message}`);
+            console.error('Error updating product:', error.response?.data || error.message);
+            setErrorMessage(`Failed to update product: ${error.response?.data?.message || error.message}`);
+            setSuccessMessage(''); // Clear any previous success messages
         }
     };
 
@@ -86,11 +105,11 @@ const AddProduct = () => {
 
     return (
         <div style={{ padding: '20px', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-            <div style={{ width: '400px' }}> {/* Set a fixed width for the form */}
+            <div style={{ width: '400px' }}>
                 <Typography variant="h4" gutterBottom align="center">
-                    Add Product
+                    Edit Product
                 </Typography>
-                <form onSubmit={handleAddProduct}>
+                <form onSubmit={handleUpdateProduct}>
                     <Grid container spacing={2}>
                         <Grid item xs={12}>
                             <TextField
@@ -111,16 +130,16 @@ const AddProduct = () => {
                                     styles={{
                                         control: (base) => ({
                                             ...base,
-                                            backgroundColor: 'white', // Set background color
-                                            borderColor: 'rgba(0, 0, 0, 0.23)', // Default border color
-                                            boxShadow: 'none', // Remove shadow
+                                            backgroundColor: 'white',
+                                            borderColor: 'rgba(0, 0, 0, 0.23)',
+                                            boxShadow: 'none',
                                             '&:hover': {
-                                                borderColor: 'rgba(0, 0, 0, 0.87)', // Change border on hover
+                                                borderColor: 'rgba(0, 0, 0, 0.87)',
                                             },
                                         }),
                                         menu: (base) => ({
                                             ...base,
-                                            zIndex: 100, // Ensure the dropdown is above other elements
+                                            zIndex: 100,
                                         }),
                                     }}
                                 />
@@ -177,7 +196,7 @@ const AddProduct = () => {
                         </Grid>
                         <Grid item xs={12}>
                             <Button type="submit" variant="contained" color="primary" fullWidth>
-                                Add Product
+                                Update Product
                             </Button>
                         </Grid>
                     </Grid>
@@ -200,4 +219,4 @@ const AddProduct = () => {
     );
 };
 
-export default AddProduct;
+export default EditProduct;

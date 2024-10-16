@@ -1,8 +1,17 @@
 // src/components/CreateOrder/CreateOrder.js
 import React, { useState, useEffect } from 'react';
-import { Stepper, Step, StepLabel, Button, Typography, TextField, Snackbar } from '@material-ui/core';
+import {
+    Stepper,
+    Step,
+    StepLabel,
+    Button,
+    Typography,
+    Snackbar,
+    Box
+} from '@mui/material';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
+import AddressForm from '../AddressForm/AddressForm'; // Import the AddressForm component
 
 const steps = ['Product Details', 'Address Details', 'Order Confirmation'];
 
@@ -29,10 +38,11 @@ const CreateOrder = ({ productId }) => {
     }, []);
 
     const handleNext = () => {
-        if (activeStep === 1 && !address) {
-            setErrorMessage('Please select an address!');
+        if (activeStep === 1 && !address && !newAddress) {
+            setErrorMessage('Please select an address or enter a new address!');
             return;
         }
+        setErrorMessage(''); // Clear any previous error messages
         setActiveStep(prevActiveStep => prevActiveStep + 1);
     };
 
@@ -42,12 +52,12 @@ const CreateOrder = ({ productId }) => {
 
     const handlePlaceOrder = async () => {
         try {
-            // First, ensure the address is saved if it's a new address
+            // Save the new address if provided
             if (newAddress) {
                 await axios.post('/addresses', { address: newAddress });
             }
 
-            // Then, place the order
+            // Place the order
             await axios.post('/orders', { productId, address: address || newAddress });
             alert('Your order is confirmed.');
 
@@ -55,6 +65,7 @@ const CreateOrder = ({ productId }) => {
             history.push('/products');
         } catch (error) {
             console.error("Error placing order:", error);
+            setErrorMessage('Failed to place the order. Please try again.');
         }
     };
 
@@ -68,7 +79,7 @@ const CreateOrder = ({ productId }) => {
                 ))}
             </Stepper>
 
-            <div>
+            <Box sx={{ mt: 2 }}>
                 {activeStep === 0 && (
                     <div>
                         <Typography variant="h6">Product Details</Typography>
@@ -77,28 +88,13 @@ const CreateOrder = ({ productId }) => {
                 )}
 
                 {activeStep === 1 && (
-                    <div>
-                        <Typography variant="h6">Address Details</Typography>
-                        <TextField
-                            select
-                            label="Select Address"
-                            value={address}
-                            onChange={(e) => setAddress(e.target.value)}
-                            fullWidth
-                            variant="outlined"
-                        >
-                            {addresses.map(addr => (
-                                <option key={addr.id} value={addr.address}>{addr.address}</option>
-                            ))}
-                        </TextField>
-                        <TextField
-                            label="New Address"
-                            value={newAddress}
-                            onChange={(e) => setNewAddress(e.target.value)}
-                            fullWidth
-                            variant="outlined"
-                        />
-                    </div>
+                    <AddressForm
+                        addresses={addresses}
+                        address={address}
+                        setAddress={setAddress}
+                        newAddress={newAddress}
+                        setNewAddress={setNewAddress}
+                    />
                 )}
 
                 {activeStep === 2 && (
@@ -118,12 +114,16 @@ const CreateOrder = ({ productId }) => {
                         <Button disabled={activeStep === 0} onClick={handleBack}>
                             Back
                         </Button>
-                        <Button variant="contained" color="primary" onClick={activeStep === steps.length - 1 ? handlePlaceOrder : handleNext}>
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={activeStep === steps.length - 1 ? handlePlaceOrder : handleNext}
+                        >
                             {activeStep === steps.length - 1 ? 'Place Order' : 'Next'}
                         </Button>
                     </div>
                 )}
-            </div>
+            </Box>
 
             <Snackbar
                 open={!!errorMessage}

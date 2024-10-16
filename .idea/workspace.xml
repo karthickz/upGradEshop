@@ -4,14 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f4d7220b-69b1-450a-8da9-0cf571daf055" name="Changes" comment="latest changes1">
+    <list default="true" id="f4d7220b-69b1-450a-8da9-0cf571daf055" name="Changes" comment="latest working code">
+      <change afterPath="$PROJECT_DIR$/src/components/AddressForm/AddressForm.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/components/EditProduct/EditProduct.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/AddProducts/AddProducts.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/AddProducts/AddProducts.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/App/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/App/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/CreateOrder/CreateOrder.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/CreateOrder/CreateOrder.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/Login/Login.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Login/Login.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/NavigationBar/NavigationBar.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/NavigationBar/NavigationBar.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/ProductDetails/ProductDetails.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/ProductDetails/ProductDetails.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/Products/Products.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/Products/Products.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -19,6 +21,7 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="ChangesViewManager" show_ignored="true" />
   <component name="Git.Settings">
     <option name="PUSH_TAGS">
       <GitPushTagMode>
@@ -96,13 +99,31 @@
       <option name="project" value="LOCAL" />
       <updated>1727290375278</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="latest changes new">
+      <option name="closed" value="true" />
+      <created>1728498646528</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1728498646528</updated>
+    </task>
+    <task id="LOCAL-00004" summary="latest working code">
+      <option name="closed" value="true" />
+      <created>1728498880243</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1728498880243</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="latest changes" />
     <MESSAGE value="latest changes1" />
-    <option name="LAST_COMMIT_MESSAGE" value="latest changes1" />
+    <MESSAGE value="latest changes new" />
+    <MESSAGE value="latest working code" />
+    <option name="LAST_COMMIT_MESSAGE" value="latest working code" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

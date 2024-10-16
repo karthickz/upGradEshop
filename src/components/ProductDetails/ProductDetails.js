@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import axios from 'axios';
-import { Card, CardContent, CardMedia, Typography, Button, TextField, Box } from '@mui/material';
+import { Card, CardContent, CardMedia, Typography, Button, TextField, Box, CircularProgress } from '@mui/material';
 
 const ProductDetails = () => {
     const { id } = useParams(); // Get product ID from URL
@@ -10,6 +10,7 @@ const ProductDetails = () => {
     const [product, setProduct] = useState(null);
     const [quantity, setQuantity] = useState(1); // Default quantity is 1
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(true); // Loading state
 
     useEffect(() => {
         const fetchProductDetails = async () => {
@@ -19,6 +20,8 @@ const ProductDetails = () => {
             } catch (error) {
                 console.error("Error fetching product details:", error);
                 setError("Failed to load product details.");
+            } finally {
+                setLoading(false); // Set loading to false once fetching is done
             }
         };
 
@@ -35,12 +38,16 @@ const ProductDetails = () => {
         history.push(`/create-order/${id}`);
     };
 
+    if (loading) {
+        return <CircularProgress />; // Show loading spinner
+    }
+
     if (error) {
         return <Typography variant="h6" color="error">{error}</Typography>;
     }
 
     if (!product) {
-        return <Typography variant="h6">Loading product details...</Typography>;
+        return <Typography variant="h6">Product not found.</Typography>;
     }
 
     return (

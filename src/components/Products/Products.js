@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
-import { Card, CardContent, CardMedia, Typography, Grid, ToggleButton, ToggleButtonGroup, MenuItem, Button, Select, FormControl, InputLabel } from '@mui/material';
+import { Card, CardContent, CardMedia, Typography, Grid, ToggleButton, ToggleButtonGroup, MenuItem, Button, Select, FormControl, InputLabel, IconButton, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 import axios from 'axios';
 import product1Image from '../../assets/Images/product1.jpg'; // Example image path for product1
 
-const Products = ({ isLoggedIn, isAdmin }) => {
+const Products = ({ isLoggedIn, isAdmin, authToken }) => {
     const history = useHistory();
-    const location = useLocation(); // Use useLocation to get query params
+    const location = useLocation();
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [sortOrder, setSortOrder] = useState('default');
-    const [searchQuery, setSearchQuery] = useState(''); // State for search query
+    const [searchQuery, setSearchQuery] = useState('');
+    const [deleteProductId, setDeleteProductId] = useState(null); // Track product to delete
+    const [openDeleteDialog, setOpenDeleteDialog] = useState(false); // Track delete dialog state
 
     // Extract search query from URL
     useEffect(() => {
@@ -33,7 +37,9 @@ const Products = ({ isLoggedIn, isAdmin }) => {
     useEffect(() => {
         const fetchCategories = async () => {
             try {
-                const response = await axios.get('https://dev-project-ecommerce.upgrad.dev/api/products/categories');
+                const response = await axios.get('https://dev-project-ecommerce.upgrad.dev/api/products/categories', {
+                    headers: { Authorization: `Bearer ${authToken}` }
+                });
                 setCategories(response.data);
             } catch (error) {
                 console.error("Error fetching categories:", error.response ? error.response.status : error.message);
@@ -42,7 +48,9 @@ const Products = ({ isLoggedIn, isAdmin }) => {
 
         const fetchProducts = async () => {
             try {
-                const response = await axios.get('https://dev-project-ecommerce.upgrad.dev/api/products');
+                const response = await axios.get('https://dev-project-ecommerce.upgrad.dev/api/products', {
+                    headers: { Authorization: `Bearer ${authToken}` }
+                });
                 setProducts(response.data);
             } catch (error) {
                 console.error("Error fetching products:", error.response ? error.response.status : error.message);
@@ -51,7 +59,7 @@ const Products = ({ isLoggedIn, isAdmin }) => {
 
         fetchCategories();
         fetchProducts();
-    }, []);
+    }, [authToken]);
 
     // Sort and filter products based on category, sortOrder, and search query
     const sortedProducts = () => {
@@ -87,11 +95,35 @@ const Products = ({ isLoggedIn, isAdmin }) => {
         setSortOrder(event.target.value);
     };
 
+    // Handle edit click - navigate to edit page
+    const handleEditClick = (productId) => {
+        history.push(`/edit-product/${productId}`);
+    };
+
+    // Handle delete click - open delete confirmation dialog
+    const handleDeleteClick = (productId) => {
+        setDeleteProductId(productId);
+        setOpenDeleteDialog(true);
+    };
+
+    // Confirm delete - send delete request to API
+    const confirmDelete = async () => {
+        try {
+            await axios.delete(`https://dev-project-ecommerce.upgrad.dev/api/products/${deleteProductId}`, {
+                headers: { Authorization: `Bearer ${authToken}` }
+            });
+            // Remove the deleted product from the UI
+            setProducts(products.filter(product => product.id !== deleteProductId));
+            setOpenDeleteDialog(false); // Close dialog after deletion
+        } catch (error) {
+            console.error("Error deleting product:", error.response ? error.response.status : error.message);
+        }
+    };
+
     return (
         <div>
             {/* Sort and category toggles */}
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', margin: '20px 0' }}>
-                {/* Sort dropdown on the left */}
                 <div style={{ flex: 1, display: 'flex', justifyContent: 'flex-start' }}>
                     <FormControl variant="outlined" style={{ minWidth: 200 }}>
                         <InputLabel>Sort by</InputLabel>
@@ -104,7 +136,6 @@ const Products = ({ isLoggedIn, isAdmin }) => {
                     </FormControl>
                 </div>
 
-                {/* Categories centered */}
                 <div style={{ flex: 1, display: 'flex', justifyContent: 'center' }}>
                     <ToggleButtonGroup value={selectedCategory} exclusive onChange={handleCategoryChange}>
                         <ToggleButton value="all">ALL</ToggleButton>
@@ -116,7 +147,6 @@ const Products = ({ isLoggedIn, isAdmin }) => {
                     </ToggleButtonGroup>
                 </div>
 
-                {/* Right-side space (for future if needed) */}
                 <div style={{ flex: 1 }}></div>
             </div>
 
@@ -145,15 +175,21 @@ const Products = ({ isLoggedIn, isAdmin }) => {
                                     <Typography variant="body2" color="textSecondary">
                                         {product.description}
                                     </Typography>
-                                    <Button variant="contained" color="primary" style={{ marginTop: '10px' }}>
-                                        Buy Now
-                                    </Button>
-                                    {isAdmin && (
-                                        <div>
-                                            <Button variant="outlined" style={{ marginRight: '10px' }}>Edit</Button>
-                                            <Button variant="outlined" color="error">Delete</Button>
-                                        </div>
-                                    )}
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '10px' }}>
+                                        <Button variant="contained" color="primary">
+                                            Buy Now
+                                        </Button>
+                                        {isAdmin && (
+                                            <div>
+                                                <IconButton aria-label="edit" size="small" onClick={() => handleEditClick(product.id)} style={{ marginRight: '10px' }}>
+                                                    <EditIcon fontSize="small" />
+                                                </IconButton>
+                                                <IconButton aria-label="delete" size="small" color="error" onClick={() => handleDeleteClick(product.id)}>
+                                                    <DeleteIcon fontSize="small" />
+                                                </IconButton>
+                                            </div>
+                                        )}
+                                    </div>
                                 </CardContent>
                             </Card>
                         </Grid>
@@ -164,6 +200,18 @@ const Products = ({ isLoggedIn, isAdmin }) => {
                     </Typography>
                 )}
             </Grid>
+
+            {/* Delete Confirmation Dialog */}
+            <Dialog open={openDeleteDialog} onClose={() => setOpenDeleteDialog(false)}>
+                <DialogTitle>Confirm Delete</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>Are you sure you want to delete this product?</DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setOpenDeleteDialog(false)} color="primary">Cancel</Button>
+                    <Button onClick={confirmDelete} color="secondary">Delete</Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 };
